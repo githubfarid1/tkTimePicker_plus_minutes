@@ -147,6 +147,7 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
         reg12hrs = self.register(self.validate12hrs)
         reg24hrs = self.register(self.validate24hrs)
         regMin = self.register(self.validateMinutes)
+        regSec = self.register(self.validateSeconds)
 
         self.period_var = tkinter.StringVar(self, value="a.m")
         self.period_var.trace("w", self.validatePeriod)
@@ -163,6 +164,10 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
                                         validate="all", validatecommand=(regMin, "%P"),
                                         command=lambda: self._minutes.event_generate("<<ChangedMins>>"))
 
+        self._seconds = tkinter.Spinbox(self, increment=1, from_=0, to=59,
+                                        validate="all", validatecommand=(regSec, "%P"),
+                                        command=lambda: self._seconds.event_generate("<<ChangedSecs>>"))
+
         self._period = ttk.Combobox(self, values=["a.m", "p.m"], textvariable=self.period_var)
         self._period.bind("<<ComboboxSelected>>", lambda a: self._minutes.event_generate("<<ChangedPeriod>>"))
 
@@ -175,6 +180,9 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
     def addMinutes(self):
         self._minutes.pack(expand=True, fill="both", side=self.orient)
 
+    def addSeconds(self):
+        self._seconds.pack(expand=True, fill="both", side=self.orient)
+
     def addPeriod(self):
         self._period.pack(expand=True, fill="both", side=self.orient)
 
@@ -185,6 +193,9 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
         return value.isdigit() and (0 <= int(value) <= 23) or value == ""
 
     def validateMinutes(self, value):
+        return value.isdigit() and (0 <= int(value) <= 59) or value == ""
+
+    def validateSeconds(self, value):
         return value.isdigit() and (0 <= int(value) <= 59) or value == ""
 
     def validatePeriod(self, *value):
@@ -222,6 +233,7 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
             self._separator.pack(expand=True, fill='both', side=self.orient)
 
         self.addMinutes()
+        self.addSeconds()
 
         if hours == constants.HOURS12:
             self.addPeriod()
@@ -245,6 +257,10 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
     def minutes(self) -> int:
         """ returns minutes """
         return int(self._minutes.get())
+
+    def seconds(self) -> int:
+        """ returns seconds """
+        return int(self._seconds.get())
 
     def period(self) -> str:
         """ returns period """
