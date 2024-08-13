@@ -151,23 +151,26 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
 
         self.period_var = tkinter.StringVar(self, value="a.m")
         self.period_var.trace("w", self.validatePeriod)
-
+        self._12HrsVar = tkinter.StringVar()
         self._12HrsTime = tkinter.Spinbox(self, increment=1, from_=1, to=12,
                                           validate="all", validatecommand=(reg12hrs, "%P"),
-                                          command=lambda: self._12HrsTime.event_generate("<<Changed12Hrs>>"))
+                                          command=lambda: self._12HrsTime.event_generate("<<Changed12Hrs>>"), textvariable=self._12HrsVar)
 
+        self._24HrsVar = tkinter.StringVar()
         self._24HrsTime = tkinter.Spinbox(self, increment=1, from_=0, to=23,
                                           validate="all", validatecommand=(reg24hrs, "%P"),
-                                          command=lambda: self._24HrsTime.event_generate("<<Changed24Hrs>>"))
-
+                                          command=lambda: self._24HrsTime.event_generate("<<Changed24Hrs>>"), textvariable=self._24HrsVar)
+        self._minutesVar = tkinter.StringVar()
         self._minutes = tkinter.Spinbox(self, increment=1, from_=0, to=59,
                                         validate="all", validatecommand=(regMin, "%P"),
-                                        command=lambda: self._minutes.event_generate("<<ChangedMins>>"))
+                                        command=lambda: self._minutes.event_generate("<<ChangedMins>>"), textvariable=self._minutesVar)
 
+        self._secondsVar = tkinter.StringVar()
         self._seconds = tkinter.Spinbox(self, increment=1, from_=0, to=59,
                                         validate="all", validatecommand=(regSec, "%P"),
-                                        command=lambda: self._seconds.event_generate("<<ChangedSecs>>"))
+                                        command=lambda: self._seconds.event_generate("<<ChangedSecs>>"), textvariable=self._secondsVar)
 
+        
         self._period = ttk.Combobox(self, values=["a.m", "p.m"], textvariable=self.period_var)
         self._period.bind("<<ComboboxSelected>>", lambda a: self._minutes.event_generate("<<ChangedPeriod>>"))
 
@@ -270,6 +273,25 @@ class SpinTimePickerOld(basetimepicker.SpinBaseClass):
         """ returns hours minutes and period """
         return self.hours(), self.minutes(), self.period()
 
+    def set12Hrs(self, val: int):
+        """ returns hours in 12 hours clock """
+        self._12HrsVar.set(val)
+
+    def set24Hrs(self, val: int):
+        """ returns hours in 24 hours clock """
+        self._24HrsVar.set(val)
+
+    def setMins(self, val: int):
+        """ sets minutes value """
+        self._minutesVar.set(val)
+
+    def setSecs(self, val: int):
+        """ sets minutes value """
+        self._secondsVar.set(val)
+
+    def setPeriod(self, val: str):
+        """ sets minutes value """
+        self.period_var.set(val)
 
 class SpinTimePickerModern(basetimepicker.SpinBaseClass):
 
